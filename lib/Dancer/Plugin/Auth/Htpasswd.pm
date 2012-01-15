@@ -15,7 +15,7 @@ use Dancer::Plugin;
 use Dancer::Response;
 use MIME::Base64;
 
-our $VERSION = '0.011';
+our $VERSION = '0.012';
 
 my $settings = plugin_setting;
 
@@ -41,7 +41,7 @@ sub _auth_htpasswd {
     
     if (-r $passwd_file) {
         # Get authentication data from request
-        my $auth = request->env->{HTTP_AUTHORIZATION};
+        my $auth = request->header('Authorization');
         
         if (defined $auth && $auth =~ /^Basic (.*)$/) {
             my ($user, $password) = split(/:/, (MIME::Base64::decode($1) ||
@@ -76,7 +76,7 @@ sub _auth_htpasswd {
     ));
 }
 
-before sub {
+hook before => sub {
     # Check if the request matches one of the protected paths (reverse sort the
     # paths to find the longest matching path first)
     foreach my $path (reverse sort keys %$paths) {
@@ -105,7 +105,7 @@ __END__
 
 =head1 VERSION
 
-Version 0.011
+Version 0.012
 
 =head1 SYNOPSIS
 
